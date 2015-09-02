@@ -1,5 +1,5 @@
 /**
- * angular-growl-v2 - v0.7.5 - 2015-06-17
+ * angular-growl-v2 - v0.7.5 - 2015-09-02
  * http://janstevens.github.io/angular-growl-2
  * Copyright (c) 2015 Marco Rinck,Jan Stevens; Licensed MIT
  */
@@ -32,7 +32,7 @@ angular.module('angular-growl').directive('growl', [function () {
             }
           });
           $scope.stopTimeoutClose = function (message) {
-            if (!message.clickToClose) {
+            if (message.clickToClose) {
               angular.forEach(message.promises, function (promise) {
                 $timeout.cancel(promise);
               });
@@ -92,7 +92,7 @@ angular.module('angular-growl').provider('growl', function () {
       error: null,
       warning: null,
       info: null
-    }, _messagesKey = 'messages', _messageTextKey = 'text', _messageTitleKey = 'title', _messageSeverityKey = 'severity', _onlyUniqueMessages = true, _messageVariableKey = 'variables', _referenceId = 0, _inline = false, _position = 'top-right', _disableCloseButton = false, _disableIcons = false, _reverseOrder = false, _disableCountDown = false, _translateMessages = true;
+    }, _messagesKey = 'messages', _messageTextKey = 'text', _messageTitleKey = 'title', _messageSeverityKey = 'severity', _onlyUniqueMessages = true, _messageVariableKey = 'variables', _referenceId = 0, _inline = false, _position = 'top-right', _disableCloseButton = false, _clickToClose = true, _disableIcons = false, _reverseOrder = false, _disableCountDown = false, _translateMessages = true;
   this.globalTimeToLive = function (ttl) {
     if (typeof ttl === 'object') {
       for (var k in ttl) {
@@ -115,6 +115,10 @@ angular.module('angular-growl').provider('growl', function () {
   };
   this.globalDisableCloseButton = function (disableCloseButton) {
     _disableCloseButton = disableCloseButton;
+    return this;
+  };
+  this.globalClickToClose = function (clickToClose) {
+    _clickToClose = clickToClose;
     return this;
   };
   this.globalDisableIcons = function (disableIcons) {
@@ -220,6 +224,7 @@ angular.module('angular-growl').provider('growl', function () {
           ttl: _config.ttl || _ttl[severity],
           variables: _config.variables || {},
           disableCloseButton: _config.disableCloseButton === undefined ? _disableCloseButton : _config.disableCloseButton,
+          clickToClose: _config.clickToClose === undefined ? _clickToClose : _config.clickToClose,
           disableIcons: _config.disableIcons === undefined ? _disableIcons : _config.disableIcons,
           disableCountDown: _config.disableCountDown === undefined ? _disableCountDown : _config.disableCountDown,
           position: _config.position || _position,
