@@ -12,6 +12,7 @@ angular.module("angular-growl").provider("growl", function () {
     _inline = false,
     _position = 'top-right',
     _disableCloseButton = false,
+    _clickToClose = true,
     _disableIcons = false,
     _reverseOrder = false,
     _disableCountDown = false,
@@ -56,6 +57,16 @@ angular.module("angular-growl").provider("growl", function () {
    */
   this.globalDisableCloseButton = function (disableCloseButton) {
     _disableCloseButton = disableCloseButton;
+    return this;
+  };
+
+  /**
+   * set whether the growl should close when (double) clicked
+   *
+   * @param {bool} clickToClose true to enable close on (double) click
+   */
+  this.globalClickToClose = function (clickToClose) {
+    _clickToClose = clickToClose;
     return this;
   };
 
@@ -225,6 +236,7 @@ angular.module("angular-growl").provider("growl", function () {
         ttl: _config.ttl || _ttl[severity],
         variables: _config.variables || {},
         disableCloseButton: _config.disableCloseButton === undefined ? _disableCloseButton : _config.disableCloseButton,
+        clickToClose: _config.clickToClose === undefined ? _clickToClose : _config.clickToClose,
         disableIcons: _config.disableIcons === undefined ? _disableIcons : _config.disableIcons,
         disableCountDown: _config.disableCountDown === undefined ? _disableCountDown : _config.disableCountDown,
         position: _config.position || _position,
