@@ -6,8 +6,10 @@ angular.module("angular-growl").provider("growl", function () {
     _messageTextKey = 'text',
     _messageTitleKey = 'title',
     _messageSeverityKey = 'severity',
+    _messageTTLKey = 'ttl',
     _onlyUniqueMessages = true,
     _messageVariableKey = 'variables',
+    _messageReferenceIdKey = 'referenceId',
     _referenceId = 0,
     _inline = false,
     _position = 'top-right',
@@ -170,6 +172,27 @@ angular.module("angular-growl").provider("growl", function () {
     return this;
   };
 
+  /**
+   * sets the key in server sent messages the serverMessagesInterecptor is looking for ttl of message
+   *
+   * @param {string} messageTTLKey default: ttl
+   */
+  this.messageTTLKey = function (messageTTLKey) {
+    _messageTTLKey = messageTTLKey;
+    return this;
+  };
+
+  /**
+   * sets the key in server sent messages the serverMessagesInterecptor is looking for referenceId of message
+   *
+   * @param {string} messageReferenceIdKey default: referenceId
+   */
+  this.messageReferenceIdKey = function (messageReferenceIdKey) {
+    _messageReferenceIdKey = messageReferenceIdKey;
+    return this;
+  };
+
+
   this.onlyUniqueMessages = function (onlyUniqueMessages) {
     _onlyUniqueMessages = onlyUniqueMessages;
     return this;
@@ -199,7 +222,7 @@ angular.module("angular-growl").provider("growl", function () {
     };
   }];
 
-  this.$get = ["$rootScope", "$interpolate", "$sce", "$filter", "$timeout", "growlMessages", function ($rootScope, $interpolate, $sce, $filter, $timeout, growlMessages) {
+  this.$get = ["$rootScope", "$interpolate", "$sce", "$filter", "$interval", "growlMessages", function ($rootScope, $interpolate, $sce, $filter, $interval, growlMessages) {
     var translate;
 
     growlMessages.onlyUnique = _onlyUniqueMessages;
@@ -221,8 +244,8 @@ angular.module("angular-growl").provider("growl", function () {
       }
       var addedMessage = growlMessages.addMessage(message);
       $rootScope.$broadcast("growlMessage", message);
-      $timeout(function () {
-      }, 0);
+      $interval(function () {
+      }, 0, 1);
       return addedMessage;
     }
 
@@ -326,6 +349,12 @@ angular.module("angular-growl").provider("growl", function () {
           var config = {};
           config.variables = message[_messageVariableKey] || {};
           config.title = message[_messageTitleKey];
+          if (message[_messageTTLKey]) {
+            config.ttl = message[_messageTTLKey];
+          }
+          if (message[_messageReferenceIdKey]) {
+            config.referenceId = message[_messageReferenceIdKey];
+          }
           sendMessage(message[_messageTextKey], config, severity);
         }
       }
